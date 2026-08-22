@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hall 14 Mess Menu</title>
+<meta name="description" content="This week's mess menu for Hall 14, IIT Kanpur.">
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#E8A33D">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="H14 Mess">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=IBM+Plex+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="site-header">
+    <div>
+      <h1 class="wordmark">HALL<span>14</span></h1>
+      <div class="header-sub">MESS MENU · IIT KANPUR</div>
+    </div>
+    <div class="header-meta">
+      <strong id="headerDate">—</strong>
+      August 2026
+    </div>
+  </header>
+
+  <section class="hero" id="heroWrap">
+    <div class="hero-inner" id="hero"><!-- filled by app.js --></div>
+  </section>
+
+  <nav class="day-row" id="dayRow" aria-label="Choose a day"></nav>
+
+  <main class="meal-grid" id="mealGrid"><!-- filled by app.js --></main>
+
+  <section class="ticket staples" id="staples"><!-- filled by app.js --></section>
+
+  <div class="footer-row">
+    <button class="install-btn" id="installBtn">
+      Install Hall 14 Mess on this device
+    </button>
+    <div class="ticket price-legend" id="priceLegend"><!-- filled by app.js --></div>
+    <p class="credit">Menu as posted for August 2026 · verify at the mess notice board for last-minute changes</p>
+  </div>
+
+</div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

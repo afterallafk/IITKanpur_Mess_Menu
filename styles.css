@@ -1,0 +1,491 @@
+:root {
+  --paper: #F5EDE0;
+  --paper-deep: #EDE0C8;
+  --card: #FBF6EB;
+  --turmeric: #E8A33D;
+  --turmeric-deep: #C97F1F;
+  --chili: #C43D2E;
+  --curry: #4C7A4E;
+  --steel: #3A5A78;
+  --ink: #2B2420;
+  --ink-soft: #6B5F52;
+  --ink-faint: #9B8E7C;
+  --line: #D9C9A8;
+
+  --font-display: "Bricolage Grotesque", "Space Grotesk", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+
+  --radius: 14px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-image:
+    radial-gradient(circle, rgba(43,36,32,0.045) 1px, transparent 1px);
+  background-size: 14px 14px;
+}
+
+.wrap {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 20px 16px 64px;
+}
+
+a { color: inherit; }
+
+/* ---------- Header ---------- */
+
+.site-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 3px solid var(--ink);
+}
+
+.wordmark {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(28px, 8vw, 40px);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.wordmark span {
+  color: var(--chili);
+}
+
+.header-sub {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-top: 4px;
+  letter-spacing: 0.02em;
+}
+
+.header-meta {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.header-meta strong {
+  display: block;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+/* ---------- Ticket base ---------- */
+
+.ticket {
+  position: relative;
+  background: var(--card);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  padding: 18px;
+}
+
+.ticket-notch {
+  position: relative;
+}
+
+.ticket-notch::before,
+.ticket-notch::after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+
+.ticket-notch::before { left: -12px; }
+.ticket-notch::after { right: -12px; }
+
+.perf {
+  border: none;
+  border-top: 3px dashed var(--line);
+  margin: 14px 0;
+}
+
+/* ---------- Hero: Now Serving ---------- */
+
+.hero {
+  margin-bottom: 22px;
+  background: linear-gradient(135deg, var(--turmeric) 0%, var(--turmeric-deep) 100%);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  color: var(--ink);
+  padding: 4px;
+}
+
+.hero-inner {
+  background: var(--card);
+  border-radius: calc(var(--radius) - 4px);
+  padding: 20px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hero-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--chili);
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+
+.hero-meal {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(22px, 6vw, 30px);
+  margin: 0 0 6px;
+}
+
+.hero-items {
+  font-size: 14px;
+  color: var(--ink-soft);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.hero-stub {
+  flex-shrink: 0;
+  text-align: center;
+  border-left: 3px dashed var(--line);
+  padding-left: 16px;
+  font-family: var(--font-mono);
+}
+
+.hero-stub .price {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.hero-stub .price-label {
+  font-size: 10px;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ---------- Day selector ---------- */
+
+.day-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 2px 14px;
+  margin-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.day-tab {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 14px;
+  background: var(--card);
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  cursor: pointer;
+  color: var(--ink-soft);
+  position: relative;
+  transition: transform 0.12s ease;
+}
+
+.day-tab:hover { transform: translateY(-2px); }
+
+.day-tab.active {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+.day-tab .dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--chili);
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* ---------- Meal cards ---------- */
+
+.meal-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.meal-card {
+  background: var(--card);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.meal-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--paper-deep);
+  border-bottom: 3px dashed var(--line);
+}
+
+.meal-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 17px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.meal-price {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 3px 9px;
+  border-radius: 20px;
+}
+
+.meal-price.special {
+  background: var(--chili);
+}
+
+.meal-body {
+  padding: 14px 16px 16px;
+}
+
+.item-list {
+  list-style: none;
+  margin: 0 0 10px;
+  padding: 0;
+}
+
+.item-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 14.5px;
+  line-height: 1.55;
+  padding: 3px 0;
+}
+
+.veg-dot {
+  flex-shrink: 0;
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  border: 1.5px solid var(--curry);
+  margin-top: 4px;
+}
+
+.veg-dot.nonveg {
+  border-radius: 50%;
+  border-color: var(--chili);
+  background: var(--chili);
+}
+
+.extra-label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin: 10px 0 6px;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  font-size: 12.5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1.5px solid var(--curry);
+  color: var(--curry);
+  background: rgba(76,122,78,0.08);
+}
+
+.chip.nonveg {
+  border-color: var(--chili);
+  color: var(--chili);
+  background: rgba(196,61,46,0.08);
+}
+
+.special-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #fff;
+  background: var(--steel);
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+/* ---------- Daily staples ---------- */
+
+.staples {
+  margin-top: 20px;
+  padding: 16px;
+}
+
+.staples h3 {
+  font-family: var(--font-display);
+  font-size: 15px;
+  margin: 0 0 10px;
+}
+
+.staples-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  font-size: 13.5px;
+  color: var(--ink-soft);
+}
+
+.staples-grid strong {
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: block;
+  margin-bottom: 3px;
+}
+
+.satwik-note {
+  margin-top: 6px;
+  font-style: italic;
+  color: var(--ink-faint);
+  font-size: 12.5px;
+}
+
+/* ---------- Footer: price legend + install ---------- */
+
+.footer-row {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.price-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 14px 16px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+}
+
+.price-legend .pl-item {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+}
+
+.price-legend .pl-item b {
+  font-size: 14px;
+}
+
+.install-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px;
+  background: var(--ink);
+  color: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+}
+
+.install-btn.visible { display: flex; }
+
+.install-btn:active { transform: scale(0.98); }
+
+.credit {
+  text-align: center;
+  font-size: 11.5px;
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+  margin-top: 8px;
+}
+
+/* ---------- Responsive: 3-up meal grid on wider screens ---------- */
+
+@media (min-width: 640px) {
+  .meal-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .hero-inner {
+    align-items: flex-start;
+  }
+}
+
+@media (min-width: 520px) {
+  .staples-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .day-tab { transition: none; }
+}
+
+/* Focus visibility */
+button:focus-visible,
+.day-tab:focus-visible {
+  outline: 3px solid var(--steel);
+  outline-offset: 2px;
+}
