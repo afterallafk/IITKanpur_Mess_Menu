@@ -198,7 +198,7 @@ button { font-family: inherit; }
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: var(--card);
+  background: #FFFFFF;
   border: 1.5px solid var(--line);
   display: flex;
   align-items: center;
