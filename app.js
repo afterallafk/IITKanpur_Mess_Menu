@@ -1,5 +1,8 @@
 const DAY_ORDER = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 const DAY_SHORT = { Monday: "MON", Tuesday: "TUE", Wednesday: "WED", Thursday: "THU", Friday: "FRI", Saturday: "SAT", Sunday: "SUN" };
+const MEAL_EMOJI = { breakfast: "🌅", lunch: "☀️", dinner: "🌙" };
+
+let selectedDay = null;
 
 function todayName() {
   const jsDay = new Date().getDay(); // 0 = Sunday
@@ -11,16 +14,42 @@ function isNonVeg(text) {
   return NONVEG_HINTS.some((h) => t.includes(h));
 }
 
-function currentMealSlot() {
-  const h = new Date().getHours() + new Date().getMinutes() / 60;
-  if (h >= 7 && h < 10.5) return "breakfast";
-  if (h >= 12 && h < 15) return "lunch";
-  if (h >= 19 && h < 21.5) return "dinner";
-  // between meals: point to the next upcoming one
-  if (h < 7) return { next: "breakfast" };
-  if (h < 12) return { next: "lunch" };
-  if (h < 19) return { next: "dinner" };
-  return { next: "breakfast" };
+function currentHourFloat() {
+  const d = new Date();
+  return d.getHours() + d.getMinutes() / 60;
+}
+
+// Returns { active: "breakfast"|"lunch"|"dinner"|null, next: "...", minutesToNext: n }
+function mealStatus() {
+  const h = currentHourFloat();
+  const order = ["breakfast", "lunch", "dinner"];
+
+  for (const key of order) {
+    const w = MEAL_WINDOWS[key];
+    if (h >= w.start && h < w.end) {
+      return { active: key, next: null, minutesToNext: 0 };
+    }
+  }
+
+  const nextKey = order.find((key) => h < MEAL_WINDOWS[key].start) || "breakfast";
+  const w = MEAL_WINDOWS[nextKey];
+  let minutesToNext;
+  if (h < w.start) {
+    minutesToNext = Math.round((w.start - h) * 60);
+  } else {
+    // after dinner, next is tomorrow's breakfast
+    minutesToNext = Math.round((24 - h + w.start) * 60);
+  }
+  return { active: null, next: nextKey, minutesToNext };
+}
+
+function relState(key, status) {
+  const order = ["breakfast", "lunch", "dinner"];
+  if (status.active === key) return "current";
+  const activeOrNextIdx = order.indexOf(status.active || status.next);
+  const idx = order.indexOf(key);
+  if (status.active) return idx < activeOrNextIdx ? "past" : "upcoming";
+  return idx < activeOrNextIdx ? "past" : "upcoming";
 }
 
 function findDay(name) {
@@ -49,43 +78,55 @@ function priceFor(dayObj, slot) {
   return PRICES[slot];
 }
 
+function formatCountdown(mins) {
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  if (h <= 0) return `${m}m`;
+  return `${h}h ${m}m`;
+}
+
 function renderHero() {
-  const slot = currentMealSlot();
+  const status = mealStatus();
   const today = findDay(todayName());
   const hero = document.getElementById("hero");
 
-  const build = (label, key, eyebrow) => {
-    const meal = today[key];
-    const price = priceFor(today, key);
-    hero.innerHTML = `
-      <div class="hero-inner">
-        <div>
-          <p class="hero-eyebrow">${eyebrow}</p>
-          <p class="hero-meal">${label}</p>
-          <p class="hero-items">${meal.items.join(" · ")}</p>
-        </div>
-        <div class="hero-stub">
-          <div class="price">₹${price}</div>
-          <div class="price-label">coupon</div>
-        </div>
-      </div>`;
-  };
+  const key = status.active || status.next;
+  const meal = today[key];
+  const price = priceFor(today, key);
+  const eyebrow = status.active
+    ? `<span class="live-dot" aria-hidden="true"></span>Now serving · ${todayName()}`
+    : `Up next · ${todayName()}`;
+  const countdown = status.active
+    ? ""
+    : `<p class="hero-countdown">Starts in ${formatCountdown(status.minutesToNext)}</p>`;
 
-  if (typeof slot === "string") {
-    build(mealLabel(slot), slot, `Now serving · ${todayName()}`);
-  } else {
-    build(mealLabel(slot.next), slot.next, `Up next · ${todayName()}`);
-  }
+  hero.innerHTML = `
+    <div>
+      <p class="hero-eyebrow">${eyebrow}</p>
+      <p class="hero-meal">${MEAL_EMOJI[key]} ${mealLabel(key)}</p>
+      <p class="hero-items">${meal.items.join(" · ")}</p>
+      ${countdown}
+    </div>
+    <div class="hero-stub">
+      <div class="price">₹${price}</div>
+      <div class="price-label">coupon</div>
+    </div>`;
 }
 
 function renderDayTabs(selected) {
+  selectedDay = selected;
   const row = document.getElementById("dayRow");
   const today = todayName();
-  row.innerHTML = DAY_ORDER.map((d) => {
+
+  const tabs = DAY_ORDER.map((d) => {
     const active = d === selected ? "active" : "";
     const isToday = d === today ? '<span class="dot" title="today"></span>' : "";
-    return `<button class="day-tab ${active}" data-day="${d}">${DAY_SHORT[d]}${isToday}</button>`;
+    return `<button class="day-tab ${active}" data-day="${d}" aria-pressed="${d === selected}">${DAY_SHORT[d]}${isToday}</button>`;
   }).join("");
+
+  const todayBtn = selected !== today ? `<button class="today-btn" id="jumpToday" type="button">Today</button>` : "";
+
+  row.innerHTML = tabs + todayBtn;
 
   row.querySelectorAll(".day-tab").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -93,31 +134,62 @@ function renderDayTabs(selected) {
       renderMeals(btn.dataset.day);
     });
   });
+
+  const jump = document.getElementById("jumpToday");
+  if (jump) {
+    jump.addEventListener("click", () => {
+      renderDayTabs(today);
+      renderMeals(today);
+    });
+  }
 }
 
 function renderMeals(dayName) {
   const dayObj = findDay(dayName);
   const grid = document.getElementById("mealGrid");
+  const status = mealStatus();
+  const isToday = dayName === todayName();
 
   const card = (key) => {
     const meal = dayObj[key];
     const price = priceFor(dayObj, key);
     const special = key === "dinner" && dayObj.dinner.special;
+    const state = isToday ? relState(key, status) : "";
+    const stateClass = state === "current" ? "is-current" : state === "past" ? "is-past" : "";
+    const tag = state === "current" ? '<span class="meal-tag">Now</span>' : state === "upcoming" && status.next === key ? '<span class="meal-tag">Next</span>' : "";
+
     return `
-      <div class="meal-card">
-        <div class="meal-card-head">
-          <p class="meal-name">${mealLabel(key)}</p>
-          <span class="meal-price ${special ? "special" : ""}">₹${price}</span>
+      <div class="meal-card ${stateClass}" data-meal="${key}">
+        <div class="meal-card-head" role="button" tabindex="0" aria-expanded="true">
+          <p class="meal-name"><span class="meal-emoji" aria-hidden="true">${MEAL_EMOJI[key]}</span>${mealLabel(key)}${tag}</p>
+          <div class="meal-head-right">
+            <span class="meal-price ${special ? "special" : ""}">₹${price}</span>
+            <svg class="meal-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </div>
         </div>
         <div class="meal-body">
-          ${special ? '<span class="special-badge">Special dinner</span>' : ""}
-          <ul class="item-list">${itemsListHTML(meal.items)}</ul>
-          ${chipsHTML(meal.extra)}
+          <div class="meal-body-inner">
+            ${special ? '<span class="special-badge">Special dinner</span>' : ""}
+            <ul class="item-list">${itemsListHTML(meal.items)}</ul>
+            ${chipsHTML(meal.extra)}
+          </div>
         </div>
       </div>`;
   };
 
   grid.innerHTML = card("breakfast") + card("lunch") + card("dinner");
+
+  grid.querySelectorAll(".meal-card-head").forEach((head) => {
+    const toggle = () => {
+      const cardEl = head.closest(".meal-card");
+      const collapsed = cardEl.classList.toggle("collapsed");
+      head.setAttribute("aria-expanded", String(!collapsed));
+    };
+    head.addEventListener("click", toggle);
+    head.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); }
+    });
+  });
 }
 
 function renderStaples() {
@@ -152,6 +224,11 @@ function renderPriceLegend() {
     <div class="pl-item"><b>+₹${PRICES.packing}</b> Packing extra</div>`;
 }
 
+function refreshLiveBits() {
+  renderHero();
+  if (selectedDay === todayName()) renderMeals(selectedDay);
+}
+
 function init() {
   const today = todayName();
   renderHero();
@@ -160,8 +237,11 @@ function init() {
   renderStaples();
   renderPriceLegend();
 
-  // refresh the "now serving" hero every few minutes so it stays accurate
-  setInterval(renderHero, 5 * 60 * 1000);
+  const versionEl = document.getElementById("appVersion");
+  if (versionEl) versionEl.textContent = `IITK Mess Menu · v${APP_VERSION}`;
+
+  // keep "now serving" / countdown accurate without a full re-render
+  setInterval(refreshLiveBits, 60 * 1000);
 
   document.getElementById("headerDate").textContent = new Date().toLocaleDateString("en-IN", {
     weekday: "long", day: "numeric", month: "long"
@@ -170,12 +250,99 @@ function init() {
 
 document.addEventListener("DOMContentLoaded", init);
 
-// ---------- PWA: service worker + install prompt ----------
+// ---------- Splash screen ----------
+// Shown briefly on first load only (not on every re-render/navigation).
+
+(function () {
+  const SPLASH_KEY = "h14-splash-shown";
+  const splash = document.getElementById("splash");
+  if (!splash) return;
+
+  let alreadyShown = false;
+  try { alreadyShown = sessionStorage.getItem(SPLASH_KEY) === "1"; } catch (e) {}
+
+  if (alreadyShown) {
+    splash.classList.add("hidden");
+    splash.style.display = "none";
+    return;
+  }
+
+  const hide = () => {
+    splash.classList.add("hidden");
+    try { sessionStorage.setItem(SPLASH_KEY, "1"); } catch (e) {}
+    setTimeout(() => { splash.style.display = "none"; }, 500);
+  };
+
+  window.addEventListener("load", () => setTimeout(hide, 900));
+  // safety net in case load event is delayed
+  setTimeout(hide, 2500);
+})();
+
+// ---------- Theme toggle (light/dark) ----------
+
+const SUN_PATH = '<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>';
+const MOON_PATH = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+
+function applyThemeIcon(theme) {
+  const icon = document.getElementById("themeIcon");
+  if (!icon) return;
+  icon.innerHTML = theme === "dark" ? SUN_PATH : MOON_PATH;
+}
+
+(function () {
+  const root = document.documentElement;
+  const current = root.getAttribute("data-theme") || "light";
+  applyThemeIcon(current);
+
+  document.addEventListener("DOMContentLoaded", () => {
+    applyThemeIcon(root.getAttribute("data-theme") || "light");
+    const btn = document.getElementById("themeToggle");
+    if (!btn) return;
+    btn.addEventListener("click", () => {
+      const next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      root.setAttribute("data-theme", next);
+      applyThemeIcon(next);
+      try { localStorage.setItem("h14-theme", next); } catch (e) {}
+    });
+  });
+})();
+
+// ---------- PWA: service worker + install prompt + update handling ----------
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./service-worker.js").catch(() => {});
+    navigator.serviceWorker.register(`./service-worker.js?v=${APP_VERSION}`).then((reg) => {
+      // Poll for an updated service-worker file so deployments are picked up
+      // without the user needing to clear their cache.
+      reg.addEventListener("updatefound", () => {
+        const installing = reg.installing;
+        if (!installing) return;
+        installing.addEventListener("statechange", () => {
+          if (installing.state === "installed" && navigator.serviceWorker.controller) {
+            showUpdateToast(reg);
+          }
+        });
+      });
+      setInterval(() => reg.update(), 60 * 60 * 1000);
+    }).catch(() => {});
   });
+
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (refreshing) return;
+    refreshing = true;
+    window.location.reload();
+  });
+}
+
+function showUpdateToast(reg) {
+  const toast = document.getElementById("updateToast");
+  const btn = document.getElementById("updateReloadBtn");
+  if (!toast || !btn) return;
+  toast.classList.add("visible");
+  btn.addEventListener("click", () => {
+    if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
+  }, { once: true });
 }
 
 let deferredPrompt = null;

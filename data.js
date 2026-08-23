@@ -3,6 +3,14 @@
 
 const PRICES = { breakfast: 55, lunch: 75, dinner: 75, specialDinner: 85, packing: 10 };
 
+// Meal serving windows — single source of truth for "now serving" / "up next" detection.
+// Edit these if Hall 14's actual timings differ.
+const MEAL_WINDOWS = {
+  breakfast: { start: 7, end: 10.5 },
+  lunch: { start: 12, end: 15 },
+  dinner: { start: 19, end: 21.5 }
+};
+
 const DAILY = {
   breakfast: {
     items: ["200ml Milk / 2 Boiled Eggs / 2 Bananas", "Tea", "Sprouts", "Bread", "Jam / Peanut Butter / Amul Butter", "Bournvita / Cornflakes / Coffee", "Dalia"],
@@ -18,7 +26,7 @@ const DAILY = {
   }
 };
 
-// veg = green, nonveg = red, mixed/either = amber — used for the little dot before each item
+// veg = green, nonveg = red — used for the little dot before each item
 const NONVEG_HINTS = ["chicken", "fish", "mutton", "egg", "keema", "kalimirch", "tandoori chicken", "korma"];
 
 const MENU = [

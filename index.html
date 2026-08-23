@@ -12,25 +12,60 @@
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="H14 Mess">
+<meta name="apple-mobile-web-app-title" content="IITK Mess">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=IBM+Plex+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
+<!-- version.js must load before styles/scripts that reference APP_VERSION -->
+<script src="version.js"></script>
 <link rel="stylesheet" href="styles.css">
+
+<!-- Prevent a flash of the wrong theme before app.js runs -->
+<script>
+  (function () {
+    try {
+      var saved = localStorage.getItem("h14-theme");
+      var theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    } catch (e) {}
+  })();
+</script>
 </head>
 <body>
+
+<!-- Splash screen: shown briefly on first load only -->
+<div id="splash" aria-hidden="true">
+  <div class="splash-logo-plate">
+    <img src="icons/IIT_Kanpur_Logo.png" alt="" width="92" height="92">
+  </div>
+  <div class="splash-text">
+    <p class="splash-title">IITK Mess Menu</p>
+    <p class="splash-sub">Hall 14 · Indian Institute of Technology Kanpur</p>
+  </div>
+</div>
+
 <div class="wrap">
 
   <header class="site-header">
-    <div>
-      <h1 class="wordmark">HALL<span>14</span></h1>
-      <div class="header-sub">MESS MENU · IIT KANPUR</div>
+    <div class="brand-row">
+      <div class="brand-crest">
+        <img src="icons/IIT_Kanpur_Logo.png" alt="IIT Kanpur crest" width="26" height="26">
+      </div>
+      <div>
+        <h1 class="wordmark">HALL<span>14</span></h1>
+        <div class="header-sub">MESS MENU · IIT KANPUR</div>
+      </div>
     </div>
-    <div class="header-meta">
-      <strong id="headerDate">—</strong>
-      August 2026
+    <div class="header-actions">
+      <div class="header-meta">
+        <strong id="headerDate">—</strong>
+        August 2026
+      </div>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">
+        <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
+      </button>
     </div>
   </header>
 
@@ -40,18 +75,24 @@
 
   <nav class="day-row" id="dayRow" aria-label="Choose a day"></nav>
 
-  <main class="meal-grid" id="mealGrid"><!-- filled by app.js --></main>
+  <main class="meal-grid" id="mealGrid" aria-label="Today's meals"><!-- filled by app.js --></main>
 
   <section class="ticket staples" id="staples"><!-- filled by app.js --></section>
 
   <div class="footer-row">
-    <button class="install-btn" id="installBtn">
+    <button class="install-btn" id="installBtn" type="button">
       Install Hall 14 Mess on this device
     </button>
     <div class="ticket price-legend" id="priceLegend"><!-- filled by app.js --></div>
     <p class="credit">Menu as posted for August 2026 · verify at the mess notice board for last-minute changes</p>
+    <span class="app-version" id="appVersion"></span>
   </div>
 
+</div>
+
+<div class="update-toast" id="updateToast">
+  <span>A new version is available</span>
+  <button id="updateReloadBtn" type="button">Refresh</button>
 </div>
 
 <script src="data.js"></script>

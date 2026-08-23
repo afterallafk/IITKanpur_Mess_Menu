@@ -1,11 +1,11 @@
 {
-  "name": "Hall 14 Mess Menu",
-  "short_name": "H14 Mess",
+  "name": "IITK Mess Menu — Hall 14",
+  "short_name": "IITK Mess",
   "description": "This week's mess menu for Hall 14, IIT Kanpur — breakfast, lunch and dinner, every day.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#F5EDE0",
+  "background_color": "#FAF6ED",
   "theme_color": "#E8A33D",
   "orientation": "portrait-primary",
   "icons": [
