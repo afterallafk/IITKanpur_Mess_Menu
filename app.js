@@ -52,6 +52,21 @@ function relState(key, status) {
   return idx < activeOrNextIdx ? "past" : "upcoming";
 }
 
+function fmtTime(h) {
+  const hh = Math.floor(h);
+  const mm = Math.round((h - hh) * 60);
+  const ampm = hh >= 12 ? "PM" : "AM";
+  const h12 = ((hh + 11) % 12) + 1;
+  return `${h12}:${String(mm).padStart(2, "0")} ${ampm}`;
+}
+
+function dateForDay(name) {
+  const now = new Date();
+  const monday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - ((now.getDay() + 6) % 7));
+  monday.setDate(monday.getDate() + DAY_ORDER.indexOf(name));
+  return monday.getDate();
+}
+
 function findDay(name) {
   return MENU.find((d) => d.day === name);
 }
@@ -64,7 +79,7 @@ function itemsListHTML(items) {
 
 function chipsHTML(items) {
   if (!items || !items.length) return "";
-  return `<div class="extra-label">Extra counter</div><div class="chip-row">${items
+  return `<div class="extra-label"><span>Extra counter</span></div><div class="chip-row">${items
     .map((it) => `<span class="chip ${isNonVeg(it) ? "nonveg" : ""}">${it}</span>`)
     .join("")}</div>`;
 }
@@ -93,19 +108,27 @@ function renderHero() {
   const key = status.active || status.next;
   const meal = today[key];
   const price = priceFor(today, key);
-  const eyebrow = status.active
-    ? `<span class="live-dot" aria-hidden="true"></span>Now serving · ${todayName()}`
-    : `Up next · ${todayName()}`;
-  const countdown = status.active
-    ? ""
-    : `<p class="hero-countdown">Starts in ${formatCountdown(status.minutesToNext)}</p>`;
+  const w = MEAL_WINDOWS[key];
+
+  const pill = status.active
+    ? `<span class="status-pill live"><span class="live-dot" aria-hidden="true"></span>Now serving</span>`
+    : `<span class="status-pill">Up next</span>`;
+
+  let foot;
+  if (status.active) {
+    const pct = Math.max(0, Math.min(100, ((currentHourFloat() - w.start) / (w.end - w.start)) * 100));
+    foot = `<div class="hero-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(pct)}"><span style="width:${pct}%"></span></div>
+      <p class="hero-time">Until ${fmtTime(w.end)}</p>`;
+  } else {
+    foot = `<p class="hero-time">Starts in ${formatCountdown(status.minutesToNext)} · ${fmtTime(w.start)}</p>`;
+  }
 
   hero.innerHTML = `
-    <div>
-      <p class="hero-eyebrow">${eyebrow}</p>
-      <p class="hero-meal">${MEAL_EMOJI[key]} ${mealLabel(key)}</p>
+    <div class="hero-main">
+      <div class="hero-top">${pill}<span class="hero-day">${todayName()}</span></div>
+      <p class="hero-meal"><span aria-hidden="true">${MEAL_EMOJI[key]}</span> ${mealLabel(key)}</p>
       <p class="hero-items">${meal.items.join(" · ")}</p>
-      ${countdown}
+      ${foot}
     </div>
     <div class="hero-stub">
       <div class="price">₹${price}</div>
@@ -120,8 +143,8 @@ function renderDayTabs(selected) {
 
   const tabs = DAY_ORDER.map((d) => {
     const active = d === selected ? "active" : "";
-    const isToday = d === today ? '<span class="dot" title="today"></span>' : "";
-    return `<button class="day-tab ${active}" data-day="${d}" aria-pressed="${d === selected}">${DAY_SHORT[d]}${isToday}</button>`;
+    const isToday = d === today ? " is-today" : "";
+    return `<button class="day-tab ${active}${isToday}" data-day="${d}" aria-pressed="${d === selected}" aria-label="${d}${d === today ? ", today" : ""}"><span class="dn">${DAY_SHORT[d]}</span><span class="dd">${dateForDay(d)}</span></button>`;
   }).join("");
 
   const todayBtn = selected !== today ? `<button class="today-btn" id="jumpToday" type="button">Today</button>` : "";
@@ -244,7 +267,7 @@ function init() {
   setInterval(refreshLiveBits, 60 * 1000);
 
   document.getElementById("headerDate").textContent = new Date().toLocaleDateString("en-IN", {
-    weekday: "long", day: "numeric", month: "long"
+    weekday: "short", day: "numeric", month: "short"
   });
 }
 
@@ -276,35 +299,6 @@ document.addEventListener("DOMContentLoaded", init);
   window.addEventListener("load", () => setTimeout(hide, 900));
   // safety net in case load event is delayed
   setTimeout(hide, 2500);
-})();
-
-// ---------- Theme toggle (light/dark) ----------
-
-const SUN_PATH = '<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>';
-const MOON_PATH = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
-
-function applyThemeIcon(theme) {
-  const icon = document.getElementById("themeIcon");
-  if (!icon) return;
-  icon.innerHTML = theme === "dark" ? SUN_PATH : MOON_PATH;
-}
-
-(function () {
-  const root = document.documentElement;
-  const current = root.getAttribute("data-theme") || "light";
-  applyThemeIcon(current);
-
-  document.addEventListener("DOMContentLoaded", () => {
-    applyThemeIcon(root.getAttribute("data-theme") || "light");
-    const btn = document.getElementById("themeToggle");
-    if (!btn) return;
-    btn.addEventListener("click", () => {
-      const next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
-      root.setAttribute("data-theme", next);
-      applyThemeIcon(next);
-      try { localStorage.setItem("h14-theme", next); } catch (e) {}
-    });
-  });
 })();
 
 // ---------- PWA: service worker + install prompt + update handling ----------

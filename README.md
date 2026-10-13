@@ -4,7 +4,13 @@ A modernized PWA (Progressive Web App) that shows the Hall 14, IIT Kanpur
 mess menu, highlights what's being served right now, and can be installed
 to a phone home screen like a native app.
 
-## What's new in this revamp
+## What's new in v3 (dark UI)
+- Fully redesigned **dark-only** interface: slate base, a single amber accent, Sora + Manrope type.
+- Sticky day selector showing the date of each day; live progress bar on the hero ticket while a meal is being served.
+- Veg / non-veg marks now use the standard Indian food-label squares.
+- Light/dark toggle removed (dark is the only theme).
+
+## Earlier revamp
 - Clean, ticket-inspired design system with a **light/dark mode** toggle
   (persisted, and defaults to the device's OS preference).
 - **IIT Kanpur branded splash screen** on first load (logo fade/scale-in),
@@ -71,7 +77,7 @@ options:
    browser bar.
 
 ## Notes
-- Menu content was transcribed from the official Hall-14 August 2026 mess
+- Menu content was transcribed from the official Hall-14 October 2026 mess
   sheet. Extra-counter items are shown as chips; a red dot/chip marks
   non-vegetarian items, green marks vegetarian, based on keyword matching —
   double check anything unusual against the real notice board.
