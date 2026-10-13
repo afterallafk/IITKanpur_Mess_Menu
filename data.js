@@ -1,5 +1,5 @@
-// Hall-14 IIT Kanpur Mess Menu — August 2026
-// Structured from the official mess menu sheet.
+// Hall-14 IIT Kanpur Mess Menu — October 2026
+// Structured from the official mess menu sheet (Mess_Menu_Oct-2026_Hall14_Updated.pdf).
 
 const PRICES = { breakfast: 55, lunch: 75, dinner: 75, specialDinner: 85, packing: 10 };
 
@@ -13,11 +13,11 @@ const MEAL_WINDOWS = {
 
 const DAILY = {
   breakfast: {
-    items: ["200ml Milk / 2 Boiled Eggs / 2 Bananas", "Tea", "Sprouts", "Bread", "Jam / Peanut Butter / Amul Butter", "Bournvita / Cornflakes / Coffee", "Dalia"],
-    note: "Regular breakfast as per the day's menu, or Bread + Butter + Jam. Butter/jam options: 1 slice butter + 1 spoon jam, or 2 slices butter, or 2 spoons jam, or 2 spoons peanut butter."
+    items: ["200ml Milk / 2 Boiled Eggs / Seasonal Fruits", "Tea", "Sprouts", "Boiled Sprouts", "Brown Bread", "Jam / Peanut Butter / Amul Butter Tikki", "Bournvita / Cornflakes / Coffee", "Dalia"],
+    note: "Regular breakfast as per the day's menu, or Brown Bread + Butter + Jam. Butter/jam options: 1 slice butter + 1 spoon jam, or 2 slices butter, or 2 spoons jam, or 2 spoons peanut butter."
   },
   lunch: {
-    items: ["Roti (Plain & Butter)", "Curd / Fruits", "Plain Rice", "Sambhar", "Salad", "Pickles"],
+    items: ["Roti (Plain & Butter)", "Plain Rice", "Sambhar", "Salad", "Pickles"],
     satwik: "Dal, Khichdi, Sabji (Friday: Moong Dal)"
   },
   dinner: {
@@ -27,49 +27,49 @@ const DAILY = {
 };
 
 // veg = green, nonveg = red — used for the little dot before each item
-const NONVEG_HINTS = ["chicken", "fish", "mutton", "egg", "keema", "kalimirch", "tandoori chicken", "korma"];
+const NONVEG_HINTS = ["chicken", "fish", "mutton", "egg", "keema", "kalimirch", "kali mirch", "tandoori chicken", "korma", "nuggets", "rogan josh", "kosha"];
 
 const MENU = [
   {
     day: "Monday",
-    breakfast: { items: ["Veg Sandwich / Pav Bhaji"] },
-    lunch: { items: ["Mix Veg", "Arhar Dal", "Jaljeera"], extra: ["Fish Curry", "Aloo Chat", "Ghujiya"] },
-    dinner: { items: ["Kaddu", "Jeera Rice", "Chana Dal Tadka"], extra: ["Tandoori Chicken", "Coconut Dry Gulab Jamun", "Paneer Dosa"] }
+    breakfast: { items: ["Masala Idli", "Fry Idli", "Idli", "Vada", "Sambhar", "Coconut Chutney"] },
+    lunch: { items: ["Mix Veg (Aloo, Matar, Shimla Mirch, Gobi/Patta Gobi, Tomato)", "Mashoor Dal", "Curd / Fruits / Lassi"], extra: ["Lite Fish Curry with Aloo", "Aloo Chat", "Balu Sahi", "Ghujiya"] },
+    dinner: { items: ["Soyabean Aloo", "Jeera Rice", "Chana Dal Tadka"], extra: ["Chicken Nuggets", "Paneer Dosa", "Coconut Dry Gulab Jamun", "Dal Baati"] }
   },
   {
     day: "Tuesday",
-    breakfast: { items: ["Fry Idli", "Idli", "Vada", "Sambhar", "Nariyal Chutney"] },
-    lunch: { items: ["Bhindi Do Pyaza", "Masoor Dal"], extra: ["Chilli Chicken / Chicken Fried Rice", "Paneer Tikka Masala", "Doodh Barfi"] },
-    dinner: { items: ["Aloo Matar", "Puri (Palak, Plain, Maida)", "White Matar Dal", "Sewai"], extra: ["Honey Chilli Potato", "Paneer Roll", "Chicken Kalimirch"] }
+    breakfast: { items: ["Vada Pav / Pav Bhaji"] },
+    lunch: { items: ["Fried Crunchy Aloo Bhindi / Bhindi Do Pyaza", "Moong Dal", "Curd / Fruits / Butter Milk"], extra: ["Chilli Chicken / Chicken Fried Rice", "Chilli Paneer", "Doodh Barfi"] },
+    dinner: { items: ["Aloo Matar", "Puri (Palak, Plain, Maida)", "White Matar Dal", "Sewai / Kheer"], extra: ["Tandoori Chicken", "Honey Chilli Potato", "Litti Choka"] }
   },
   {
     day: "Wednesday",
-    breakfast: { items: ["Paratha (Aloo, Pyaz)", "Green Chutney Sauce"] },
-    lunch: { items: ["Kadhi Pakoda", "Aloo Jeera", "Pappad", "Curd / Fruits", "Butter Milk"], extra: ["Chicken Roll", "Milk Peda", "Chilli Mushroom", "Dahi Gujhiya"] },
-    dinner: { items: ["Handi Paneer / Matar Paneer, or Butter Chicken / Chicken Korma", "Chana Dal", "Missi Roti", "Tandoori Roti", "Basanti Pulao"], extra: ["Moong Dal Halwa"], special: true }
+    breakfast: { items: ["Paratha (Aloo, Sattu/Mooli, Pyaz)", "Green Chutney Sauce", "Sauce", "Milk / Curd / Eggs"] },
+    lunch: { items: ["Soyabean Chaap", "Kali Mashoor", "Tehri", "Pappad", "Curd / Fruits"], extra: ["Chicken Kosha / Chicken Roll", "Milk Peda", "Chilli Mushroom"] },
+    dinner: { items: ["Matar Paneer / Paneer Butter Masala / Handi Paneer, or Butter Chicken / Chicken Malai Tikka", "Chana Nariyal Dal", "Plain Paratha"], extra: ["Moong Dal Halwa"], special: true }
   },
   {
     day: "Thursday",
-    breakfast: { items: ["Besan Chilla / Uthappam", "Sambhar", "Nariyal Chutney"] },
-    lunch: { items: ["Amritsari Chola", "Bhatura", "Custard"], extra: ["Fish Curry"] },
-    dinner: { items: ["Parwal", "Imli Rice", "French Fries", "Arhar Dal"], extra: ["Chicken Biryani", "Methi Malai Paneer", "Litti Choka", "Kalakand"] }
+    breakfast: { items: ["Veg Macaroni / Pasta (Sujiwala) / Cutlet", "Halwa Chana"] },
+    lunch: { items: ["Veg Hyderabadi Biriyani / Pulao", "Salan", "Boondi Raita", "Dal Makhni"], extra: ["Egg Curry", "Paneer Tikka", "Shahi Toast / Coconut Barfi"] },
+    dinner: { items: ["Veg Kofta / Patta Gobhi Gajar Matar", "Chana Dal", "French Fries / Fryums", "Papad"], extra: ["Mutton Korma", "Cheese Fries", "Kalakand", "Paneer Do Pyaza"] }
   },
   {
     day: "Friday",
-    breakfast: { items: ["Aloo Sabji", "Poori", "Matar Kachauri", "Halwa", "Chana"] },
-    lunch: { items: ["Veg Biryani", "Salan", "Boondi Raita", "Dal Makhani"], extra: ["Egg Curry", "Paneer Jalebi", "Paneer Butter Masala"] },
-    dinner: { items: ["Veg Kofta", "Chana Dal Fry", "Chowmin"], extra: ["Mutton Korma", "Bread Malai Sandwich", "Paneer Do Pyaza", "Golgaape"] }
+    breakfast: { items: ["Besan Chilla / Uthappam", "Sambhar", "Nariyal Chutney"] },
+    lunch: { items: ["Amritsari Chole", "Bhature", "Custard / Ice Cream"], extra: ["Mustard Fish Curry", "Spring Roll", "Malai Boondi"] },
+    dinner: { items: ["Chilli Soyabean Pulao", "Kala Chana Curry", "Arhar Dal"], extra: ["Chicken Kali Mirch / Achari Chicken", "Mushroom Paneer Gravy"] }
   },
   {
     day: "Saturday",
     breakfast: { items: ["Poha", "Jalebi", "Curd", "Bhujia Namkeen (Mix)"] },
-    lunch: { items: ["Paratha (Aloo, Mix-Veg)", "Paneer Paratha (2pc)", "Chola", "Sonth Chutney", "Green Chutney"], extra: ["Fish Finger", "Shahi Toast"] },
-    dinner: { items: ["Lauki Jeera / Kathal", "Aloo Bharta", "Kheer"], extra: ["Chicken Biryani", "Milk Cake", "Dahi ke Sholey"] }
+    lunch: { items: ["Paratha (Aloo, Mix-Veg)", "Paneer Paratha", "Chola", "Sonth Chutney", "Green Chutney", "Curd / Fruits"], extra: ["Fish Finger", "Dahi Kabab"] },
+    dinner: { items: ["Rajma", "Jeera Rice", "Aloo Baigan / Lauki Chana / Baigan Ka Bharta", "Roti", "Salad", "Papad"], extra: ["Hyderabadi Chicken Biriyani", "Paneer Pakoda / Chilli Mushroom", "Milk Cake"] }
   },
   {
     day: "Sunday",
     breakfast: { items: ["Dosa", "Sambhar", "Nariyal Chutney", "Tomato Chutney"] },
-    lunch: { items: ["Rajma", "Jeera Rice", "Aloo Baingan"], extra: ["Egg Biryani", "Aloo Posto", "Ras Malai"] },
-    dinner: { items: ["Kadhai Paneer / Paneer Butter Masala, or Chicken Kali Mirch", "Arhar Dal", "Pulao", "Butter Naan", "Tandoori Roti", "Gulab Jamun"], special: true }
+    lunch: { items: ["Rajma", "Sev Tamatar Sbzi", "Fruits"], extra: ["Egg Biriyani", "Boondi Laddu / Ras Malai", "Tomato Kaju Paneer"] },
+    dinner: { items: ["Kadhai Paneer / Matar Paneer, or Chicken Rogan Josh", "Arhar Dal", "Pulao", "Butter Naan", "Tandoori Roti", "Gulab Jamun / White Rosogolla"], special: true }
   }
 ];
